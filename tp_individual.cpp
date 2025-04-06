@@ -22,24 +22,36 @@ struct Grafo{
     }
 };
 
-bool pertenece(std::list<int> l,int e){
+bool pertenece(std::list<std::tuple<int,int,int>> l,int e){
     bool result=false;
-    for (int i:l){
-        if (i==e){
+    for (std::tuple<int,int,int> i:l){
+        if (std::get<2>(i)==e){
             result=true;
         }   }
     return result;
     };
 
-std::list<int> bfs(Grafo gr, int orig, int dest){
-    std::list<int> visit={};
-    std::queue<int> q;
+std::list<std::tuple<int,int,int>> bfsMinimosCaminos(Grafo gr, int orig, int dest){
+    std::list<std::tuple<int,int,int>> visit={};
+    std::queue<std::tuple<int,int,int>> q;
+    q.push(std::tuple(0,orig,orig));
+    bool ultimoNivel=false;
+    int nivel=0;
     while (not q.empty()){
-        int v=q.front();
+        std::tuple<int,int,int> vtup=q.front();
+        int v=std::get<2>(vtup);
+        int nivelAct=std::get<0>(vtup)+1;
+        if (not (nivel==nivelAct)){
+            visit.push_front(vtup);
+        }
         for (int i:gr.Vecinos(v)){
-            if (not pertenece(visit,i)){
-                q.push(i);
+            if ((not (pertenece(visit,i))) && (not ultimoNivel)){
+                q.push(std::tuple(nivelAct,v,i));
             }
+        }
+        if (v==dest){
+            ultimoNivel=true;
+            nivel = nivelAct;
         }
     }
     return visit;
