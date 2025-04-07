@@ -36,22 +36,21 @@ std::list<std::tuple<int,int,int>> bfsMinimosCaminos(Grafo gr, int orig, int des
     std::queue<std::tuple<int,int,int>> q;
     q.push(std::tuple(0,orig,orig));
     bool ultimoNivel=false;
-    int nivel=0;
+    int nivel=-1;
     while (not q.empty()){
         std::tuple<int,int,int> vtup=q.front();
         int v=std::get<2>(vtup);
         int nivelAct=std::get<0>(vtup)+1;
+        if (v==dest){
+            nivel = nivelAct;
+        }
         if (not (nivel==nivelAct)){
             visit.push_front(vtup);
         }
         for (int i:gr.Vecinos(v)){
-            if ((not (pertenece(visit,i))) && (not ultimoNivel)){
+            if ((not (pertenece(visit,i))) && (not nivel==nivelAct)){
                 q.push(std::tuple(nivelAct,v,i));
             }
-        }
-        if (v==dest){
-            ultimoNivel=true;
-            nivel = nivelAct;
         }
     }
     return visit;
